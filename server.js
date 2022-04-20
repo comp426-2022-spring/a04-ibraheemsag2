@@ -5,10 +5,10 @@ const db = require("./database.js")
 const morgan = require('morgan');
 var arg = require('minimist')(process.argv.slice(2))
 const stream = require('stream');
-const { access } = require('fs');
+const fs = require('fs');
 
 // See what is stored in the object produced by minimist
-console.log(args)
+console.log(arg)
 // Store help text 
 const help = (`
 server.js [options]
@@ -35,12 +35,12 @@ const server = app.listen(port, () => {
 
 // Use morgan for logging to files
 // Create a write stream to append (flags: 'a') to a file
-if(!(args.log)){
-  const WRITESTREAM = fs.createWriteStream(path.join(_dirname, "access.log"), { flags: 'a' })
+if(!(arg.log)){
+  const WRITESTREAM = fs.createWriteStream("./access.log", { flags: 'a' })
   // Set up the access logging middleware
   app.use(morgan('combined', { stream: WRITESTREAM }))}
 // If --help or -h, echo help text to STDOUT and exit
-if (args.help || args.h) {
+if (arg.help || arg.h) {
     console.log(help)
     process.exit(0)
 }
@@ -63,7 +63,7 @@ const info = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logd
 next()
   })
 
-if(args.debug != false){
+if(arg.debug != false){
   app.get('/app/log/access', (req, res) => { 
     try {
       const stmt = db.prepare('SELECT * FROM accesslog').all()

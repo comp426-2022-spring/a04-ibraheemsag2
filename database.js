@@ -1,4 +1,4 @@
-/ This ensures that things do not fail silently but will throw errors instead.
+//This ensures that things do not fail silently but will throw errors instead.
 "use strict";
 // Require better-sqlite.
 const Database = require('better-sqlite3');
@@ -18,7 +18,7 @@ if (row === undefined) {
     console.log('Your database appears to be empty. I will initialize it now.');
 // Set a const that will contain your SQL commands to initialize the database.
     const sqlInit = `
-        CREATE TABLE accesslog (remoteaddr INTEGER PRIMARY KEY, remoteuser TEXT, time TEXT, method TEXT, url TEXT, protocol TEXT, httpversion TEXT, status INT, referer TEXT, useragent TEXT);
+        CREATE TABLE accesslog (remoteaddr INTEGER PRIMARY KEY, remoteuser TEXT, time TEXT, method TEXT, url TEXT, protocol TEXT, httpversion TEXT, status INTEGER, referer TEXT, useragent TEXT);
     `;
 // Execute SQL commands that we just wrote above.
     db.exec(sqlInit);
