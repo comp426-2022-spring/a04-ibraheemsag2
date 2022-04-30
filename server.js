@@ -7,9 +7,9 @@ const morgan = require('morgan');
 var arg = require('minimist')(process.argv.slice(2))
 const stream = require('stream');
 const fs = require('fs');
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 
-// See what is stored in the object produced by minimist
-console.log(arg)
 // Store help text 
 const help = (`
 server.js [options]
@@ -66,10 +66,11 @@ app.use((req, res, next) => {
     referer: req.headers['referer'],
     useragent: req.headers['user-agent']
 }
-const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, status, referer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, status, referer, useragent) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)')
+console.log(logdata)
 const info = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.status, logdata.referer, logdata.useragent)
 next()
-})
+});
 const server = app.listen(port, () => {
   console.log('App listening on port %PORT%'.replace('%PORT%',port))
 });
