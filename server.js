@@ -1,9 +1,7 @@
 // Require Express.js
 const express = require('express')
-
 const app = express()
 const db = require("./database.js")
-
 const morgan = require('morgan');
 var arg = require('minimist')(process.argv.slice(2))
 const stream = require('stream');
@@ -37,10 +35,8 @@ const server = app.listen(port, () => {
 
 // Use morgan for logging to files
 // Create a write stream to append (flags: 'a') to a file
-const log = args.log || true
-if(log){
-  const WRITESTREAM = fs.createWriteStream("access.log", { flags: 'a' })
-  //maybe need to change this 
+if(!(arg.log)){
+  const WRITESTREAM = fs.createWriteStream("./access.log", { flags: 'a' })
   // Set up the access logging middleware
   app.use(morgan('combined', { stream: WRITESTREAM }))}
 // If --help or -h, echo help text to STDOUT and exit
@@ -64,11 +60,10 @@ app.use((req, res, next) => {
 }
 const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, status, referer, useragent) VALUES (?, ?, ?, ?, ? , ?, ?, ?, ?, ?)')
 const info = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.status, logdata.referer, logdata.useragent)
-
 next()
   })
 
-if(arg.debug == true){
+if(arg.debug != false){
   app.get('/app/log/access', (req, res) => { 
     try {
       const stmt = db.prepare('SELECT * FROM accesslog').all()
