@@ -30,8 +30,6 @@ server.js [options]
 // Start an app server
 const port =  arg.port||process.env.PORT|| 5555
 
-//fr
-
 // If --help or -h, echo help text to STDOUT and exit
 if (arg.help || arg.h) {
     console.log(help)
@@ -42,7 +40,6 @@ if(debug == true){
   app.get('/app/log/access', (req, res) => { 
     const stmt = db.prepare('SELECT * FROM accesslog').all()
     res.status(200).json(stmt)
-  
 });
   app.get('/app/error', (req, res) => { 
     throw new Error('Error test successful')
@@ -69,12 +66,10 @@ app.use((req, res, next) => {
     referer: req.headers['referer'],
     useragent: req.headers['user-agent']
 }
-const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, status, referer, useragent) VALUES (?, ?, ?, ?, ? , ?, ?, ?, ?, ?)')
+const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, status, referer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
 const info = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.status, logdata.referer, logdata.useragent)
 next()
 })
-
-
 const server = app.listen(port, () => {
   console.log('App listening on port %PORT%'.replace('%PORT%',port))
 });
