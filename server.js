@@ -48,9 +48,9 @@ if(debug == true){
 // Create a write stream to append (flags: 'a') to a file
 const log = arg.log || true
 if(log == true){
-  const WRITESTREAM = fs.createWriteStream("access.log", { flags: 'a' })
+  const accessLog = fs.createWriteStream("access.log", { flags: 'a' })
   // Set up the access logging middleware
-  app.use(morgan('combined', { stream: WRITESTREAM }))}
+  app.use(morgan('combined', { stream: accessLog }))}
 
 app.use((req, res, next) => {
   // Your middleware goes here.
