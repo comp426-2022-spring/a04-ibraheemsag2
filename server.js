@@ -40,12 +40,9 @@ if (arg.help || arg.h) {
 const debug = arg.debug || false
 if(debug == true){
   app.get('/app/log/access', (req, res) => { 
-    try {
-      const stmt = db.prepare('SELECT * FROM accesslog').all()
-      res.status(200).json(stmt)
-  } catch {
-      console.error(e)
-  }
+    const stmt = db.prepare('SELECT * FROM accesslog').all()
+    res.status(200).json(stmt)
+  
 });
   app.get('/app/error', (req, res) => { 
     throw new Error('Error test successful')
