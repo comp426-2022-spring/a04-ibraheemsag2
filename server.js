@@ -4,12 +4,13 @@ const app = express()
 const db = require("./database.js")
 
 const morgan = require('morgan');
-var arg = require('minimist')(process.argv.slice(2))
+const arg = require('minimist')(process.argv.slice(2))
 const stream = require('stream');
 const fs = require('fs');
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
+arg["help", "port", "debug", "log"]
 // Store help text 
 const help = (`
 server.js [options]
@@ -35,7 +36,9 @@ if (arg.help || arg.h) {
     console.log(help)
     process.exit(0)
 }
+
 const debug = arg.debug || false
+
 if(debug == true){
   app.get('/app/log/access', (req, res) => { 
     const stmt = db.prepare('SELECT * FROM accesslog').all()
@@ -44,6 +47,7 @@ if(debug == true){
   app.get('/app/error', (req, res) => { 
     throw new Error('Error test successful')
   });}
+
 // Use morgan for logging to files
 // Create a write stream to append (flags: 'a') to a file
 const log = arg.log || true
@@ -53,7 +57,6 @@ if(log == true){
   app.use(morgan('combined', { stream: accessLog }))}
 
 app.use((req, res, next) => {
-
   let logdata = {
       remoteaddr: req.ip,
       remoteuser: req.user,
@@ -66,10 +69,8 @@ app.use((req, res, next) => {
       referer: req.headers["referer"],
       useragent: req.headers["user-agent"],
   };
-
   const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, status, referer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
   const info = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.status, logdata.referer, logdata.useragent)
-
   next();
 });
 
