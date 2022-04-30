@@ -41,7 +41,7 @@ if (arg.help || arg.h) {
     process.exit(0)
 }
 const debug = args.debug || false
-if(debug){
+if(debug == true){
   app.get('/app/log/access', (req, res) => { 
     try {
       const stmt = db.prepare('SELECT * FROM accesslog').all()
