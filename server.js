@@ -30,9 +30,6 @@ server.js [options]
 // Start an app server
 const port =  arg.port||process.env.PORT|| 5555
 
-const server = app.listen(port, () => {
-    console.log('App listening on port %PORT%'.replace('%PORT%',port))
-});
 
 
 // If --help or -h, echo help text to STDOUT and exit
@@ -40,8 +37,8 @@ if (arg.help || arg.h) {
     console.log(help)
     process.exit(0)
 }
-const debug = args.debug || false
-if(debug == true){
+const debug = arg.debug || false
+if(debug){
   app.get('/app/log/access', (req, res) => { 
     try {
       const stmt = db.prepare('SELECT * FROM accesslog').all()
@@ -81,6 +78,9 @@ next()
 })
 
 
+const server = app.listen(port, () => {
+  console.log('App listening on port %PORT%'.replace('%PORT%',port))
+});
 // Default response for any other request
 
 
