@@ -2,6 +2,7 @@
 const express = require('express')
 const app = express()
 const db = require("./database.js")
+
 const morgan = require('morgan');
 var arg = require('minimist')(process.argv.slice(2))
 const stream = require('stream');
@@ -33,17 +34,28 @@ const server = app.listen(port, () => {
     console.log('App listening on port %PORT%'.replace('%PORT%',port))
 });
 
-// Use morgan for logging to files
-// Create a write stream to append (flags: 'a') to a file
-if(!(arg.log)){
-  const WRITESTREAM = fs.createWriteStream("./access.log", { flags: 'a' })
-  // Set up the access logging middleware
-  app.use(morgan('combined', { stream: WRITESTREAM }))}
+
 // If --help or -h, echo help text to STDOUT and exit
 if (arg.help || arg.h) {
     console.log(help)
     process.exit(0)
 }
+if(arg.debug != false){
+  app.get('/app/log/access', (req, res) => { 
+    try {
+      const stmt = db.prepare('SELECT * FROM accesslog').all()
+      res.status(200).json(stmt)
+  } catch {
+      console.error(e)
+  }
+  });
+// Use morgan for logging to files
+// Create a write stream to append (flags: 'a') to a file
+if(!(arg.log)){
+  const WRITESTREAM = fs.createWriteStream("access.log", { flags: 'a' })
+  // Set up the access logging middleware
+  app.use(morgan('combined', { stream: WRITESTREAM }))}
+
 app.use((req, res, next) => {
   // Your middleware goes here.
   let logdata = {
@@ -63,15 +75,7 @@ const info = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logd
 next()
   })
 
-if(arg.debug != false){
-  app.get('/app/log/access', (req, res) => { 
-    try {
-      const stmt = db.prepare('SELECT * FROM accesslog').all()
-      res.status(200).json(stmt)
-  } catch {
-      console.error(e)
-  }
-  });
+
   app.get('/app/log/error', (req, res) => { 
     throw new Error('Error test successful')
   });
