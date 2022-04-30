@@ -41,7 +41,7 @@ if (arg.help || arg.h) {
     process.exit(0)
 }
 const debug = args.debug || false
-if(debug){
+if(debug == true){
   app.get('/app/log/access', (req, res) => { 
     try {
       const stmt = db.prepare('SELECT * FROM accesslog').all()
@@ -52,7 +52,8 @@ if(debug){
   });
 // Use morgan for logging to files
 // Create a write stream to append (flags: 'a') to a file
-if(!(arg.log)){
+const log = args.log || true
+if(log == true){
   const WRITESTREAM = fs.createWriteStream("access.log", { flags: 'a' })
   // Set up the access logging middleware
   app.use(morgan('combined', { stream: WRITESTREAM }))}
