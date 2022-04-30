@@ -52,7 +52,7 @@ if(debug){
   });}
 // Use morgan for logging to files
 // Create a write stream to append (flags: 'a') to a file
-const log = args.log || true
+const log = arg.log || true
 if(log){
   const WRITESTREAM = fs.createWriteStream("access.log", { flags: 'a' })
   // Set up the access logging middleware
